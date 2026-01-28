@@ -63,14 +63,22 @@
           <option>Tra 1 ora</option>
         </select>
       </label>
+     <select id="distanceSelect" aria-label="Distanza massima">
+      <option value="any">Qualsiasi distanza</option>
+      <option value="500">Entro 500 m</option>
+      <option value="1000">Entro 1 km</option>
+      <option value="3000">Entro 3 km</option>
+      <option value="5000">Entro 5 km</option>
+     </select>
 
       <button type="button" id="createEventBtn">
         + Crea un evento 
       </button>
+      
       <label class="toggle">
-  <input type="checkbox" id="soloMode" />
-  Modalità SOLO
-</label>
+        <input type="checkbox" id="soloMode" />
+         Modalità SOLO
+      </label>
 
 <button type="button" id="cancelCreateBtn" hidden>
   Annulla
