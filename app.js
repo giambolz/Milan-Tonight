@@ -354,6 +354,7 @@ function updateDistanceBadges() {
   if (!userLocation) {
     console.log('[dist] niente userLocation ancora');
     return;
+    
   }
 
   console.log('[dist] updateDistanceBadges chiamata, userLocation=', userLocation);
@@ -374,6 +375,8 @@ function updateDistanceBadges() {
     const mins = estimateWalkMinutes(d);
     distEl.textContent = `📍 ${formatDistance(d)} • ~${mins} min a piedi`;
   });
+    applyListRules();
+  
 }
 
 
@@ -630,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupUserEventsFromStorage();
   setupCreateEventButton();
   setupSoloMode();
-  // Se vuoi che chieda subito la posizione e vada al più vicino:
+  setupDistanceFilter();
   requestUserLocationImmediately(true);
   updateDistanceBadges();
 });
