@@ -286,6 +286,8 @@ function estimateWalkMinutes(meters) {
 }
 
 function updateDistanceBadges() {
+  console.log('[dist] chiamata updateDistanceBadges', userLocation);
+
   if (!userLocation) {
     console.log('[dist] niente userLocation ancora');
     return;
