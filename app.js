@@ -245,6 +245,7 @@ function requestUserLocationImmediately(focusNearest = false) {
       }
 
       map.setView([userLocation.lat, userLocation.lng], 14);
+      updateDistanceBadges();
 
       if (focusNearest) focusNearestEvent();
     },
@@ -254,7 +255,6 @@ function requestUserLocationImmediately(focusNearest = false) {
     },
     { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
   );
-  updateDistanceBadges();
 
 }
 
@@ -286,11 +286,16 @@ function estimateWalkMinutes(meters) {
 }
 
 function updateDistanceBadges() {
-  if (!userLocation) return;
+  if (!userLocation) {
+    console.log('[dist] niente userLocation ancora');
+    return;
+  }
+
   console.log('[dist] updateDistanceBadges chiamata, userLocation=', userLocation);
 
   const cards = getAllEventCards();
-  
+  console.log('[dist] cards=', cards.length, 'badges=', document.querySelectorAll('[data-distance]').length);
+
   cards.forEach(card => {
     const lat = parseFloat(card.dataset.lat);
     const lng = parseFloat(card.dataset.lng);
@@ -302,9 +307,8 @@ function updateDistanceBadges() {
     const mins = estimateWalkMinutes(d);
     distEl.textContent = `📍 ${formatDistance(d)} • ~${mins} min a piedi`;
   });
-  console.log('[dist] cards=', cards.length, 'badges=', document.querySelectorAll('[data-distance]').length);
-
 }
+
 
 
 function getAllEventCards() {
