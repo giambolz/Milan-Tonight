@@ -221,6 +221,68 @@ function setupNearMeSelect() {
     requestUserLocationImmediately(true);
   });
 }
+const DIST_FILTER_KEY = 'staseraMilano_distFilter_v1';
+
+function setupDistanceFilter() {
+  const sel = document.getElementById('distanceSelect');
+  if (!sel) return;
+
+  // restore
+  const saved = loadJSON(DIST_FILTER_KEY, { max: 'any' });
+  sel.value = saved.max || 'any';
+
+  sel.addEventListener('change', () => {
+    saveJSON(DIST_FILTER_KEY, { max: sel.value });
+    applyListRules();
+  });
+
+  // applica subito al load
+  applyListRules();
+}
+
+function applyListRules() {
+  applyDistanceFilter();
+  sortCardsByDistanceIfPossible();
+}
+
+function applyDistanceFilter() {
+  const sel = document.getElementById('distanceSelect');
+  if (!sel) return;
+
+  const max = sel.value === 'any' ? null : parseInt(sel.value, 10);
+
+  const cards = getAllEventCards();
+  cards.forEach(card => {
+    // se non ho userLocation o dist non calcolata, non filtro per distanza (evitiamo "sparizioni misteriose")
+    if (!max || !userLocation || !card.dataset.distM) {
+      card.hidden = false;
+      return;
+    }
+    const d = parseInt(card.dataset.distM, 10);
+    card.hidden = !(Number.isFinite(d) && d <= max);
+  });
+}
+
+function sortCardsByDistanceIfPossible() {
+  if (!userLocation) return;
+
+  const container = document.getElementById('events');
+  if (!container) return;
+
+  const cards = Array.from(container.querySelectorAll('.card'));
+
+  // se non ho distanze calcolate, niente sort
+  if (!cards.some(c => c.dataset.distM)) return;
+
+  cards.sort((a, b) => {
+    const da = parseInt(a.dataset.distM || '9999999', 10);
+    const db = parseInt(b.dataset.distM || '9999999', 10);
+    return da - db;
+  });
+
+  // ri-appendo nello stesso container -> cambia ordine in pagina
+  cards.forEach(c => container.appendChild(c));
+}
 
 function requestUserLocationImmediately(focusNearest = false) {
   if (!navigator.geolocation || !map) {
@@ -245,7 +307,7 @@ function requestUserLocationImmediately(focusNearest = false) {
       }
 
       map.setView([userLocation.lat, userLocation.lng], 14);
-      updateDistanceBadges();
+      
 
       if (focusNearest) focusNearestEvent();
     },
@@ -254,8 +316,9 @@ function requestUserLocationImmediately(focusNearest = false) {
       // niente panico: restiamo su Milano
     },
     { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+    updateDistanceBadges();
   );
-
+updateDistanceBadges();
 }
 
 
@@ -569,5 +632,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupSoloMode();
   // Se vuoi che chieda subito la posizione e vada al più vicino:
   requestUserLocationImmediately(true);
+  updateDistanceBadges();
 });
 
