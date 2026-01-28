@@ -301,7 +301,9 @@ function updateDistanceBadges() {
   cards.forEach(card => {
     const lat = parseFloat(card.dataset.lat);
     const lng = parseFloat(card.dataset.lng);
-    const d = distanceMeters(userLocation, { lat, lng });
+    const d = distanceMeters(userLocation, { lat, lng }); 
+    card.dataset.distM = String(Math.round(d));
+  
 
     const distEl = card.querySelector('[data-distance]');
     if (!distEl) return;
